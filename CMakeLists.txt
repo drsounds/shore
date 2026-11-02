@@ -28,6 +28,7 @@ option(SHORE_BUILD_TESTS "Build tests" ON)
 
 set(_core_sources
   src/app.cpp
+  src/canvas.cpp
   src/concept.cpp
   src/dialog.cpp
   src/document.cpp

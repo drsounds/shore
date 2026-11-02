@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "A small, backend-agnostic C++ Document/View framework",
   "homepage": "https://github.com/drsounds/shore",
-  "license": "MIT",
+  "license": "LGPL",
   "dependencies": [
     {
       "name": "vcpkg-cmake",

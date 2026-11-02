@@ -35,8 +35,9 @@ struct View : SHView {
 };
 struct Canvas : SHCanvas {
     int Width() const override { return 1; } int Height() const override { return 1; }
-    void FillRect(int, int, int, int, SHColor) override {}
-    void DrawLine(int, int, int, int, SHColor) override {}
+    int fills = 0, lines = 0;
+    void FillRect(int, int, int, int, SHColor) override { ++fills; }
+    void DrawLine(int, int, int, int, SHColor) override { ++lines; }
     void DrawText(int, int, const std::string&, SHColor) override {}
 };
 struct App : SHApp {
@@ -63,6 +64,13 @@ struct App : SHApp {
         CHECK(properties.Groups().size() == 1 && properties.Groups()[0].Properties()[0].value == "10");
 
         Canvas c;
+        c.Width();
+        c.DrawRect(0, 0, 4, 4, SHColor());
+        c.FillEllipse(0, 0, 6, 6, SHColor());
+        c.FillPolygon({{0, 0}, {5, 0}, {0, 5}}, SHColor());
+        CHECK(c.fills > 0 && c.lines == 0);
+        c.DrawEllipse(0, 0, 6, 6, SHColor());
+        CHECK(c.lines > 0 && c.MeasureText("ab").width == 16);
         SHDocumentRenderer renderer;
         renderer.Render(doc, c, SHRenderMode::Preview);
         CHECK(rendered.size() == 3 && rendered[0] == SHRenderMode::Preview);

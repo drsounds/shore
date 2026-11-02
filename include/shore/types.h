@@ -19,6 +19,8 @@ class SHPanel;
 
 struct SHColor { unsigned char r = 0, g = 0, b = 0; };
 struct SHRect { int x = 0, y = 0, width = 0, height = 0; };
+struct SHPoint { int x = 0, y = 0; };
+struct SHSize { int width = 0, height = 0; };
 
 enum class SHRenderMode { Editing, Preview, Print, Export };
 enum class SHDockPosition { Left, Right, Top, Bottom };
