@@ -8,14 +8,18 @@ the backend is chosen at build time:
 |----------|----------|----------------|
 | Windows  | MFC or WTL | MSVC         |
 | Linux    | wxWidgets| g++            |
+| any      | Qt 6     | Qt 6 Widgets   |
 | macOS    | Cocoa    | LLVM/Clang     |
 | any      | null     | headless/tests |
 
 ```
-cmake -B build -DSHORE_BACKEND=auto   # auto|mfc|wtl|wx|cocoa|null
+cmake -B build -DSHORE_BACKEND=auto   # auto|mfc|wtl|wx|qt|cocoa|null
 cmake --build build
 ctest --test-dir build
 ```
+
+The Qt 6 backend requires the Qt 6 Widgets development package and can be selected
+with `-DSHORE_BACKEND=qt`.
 
 The WTL backend requires WTL and ATL headers. If CMake cannot locate `atlapp.h`,
 set `WTL_ROOT` to the WTL installation directory when configuring.
