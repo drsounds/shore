@@ -1,13 +1,4 @@
 @PACKAGE_INIT@
 
-include(CMakeFindDependencyMacro)
-if(@SHORE_NEEDS_WX@)
-  find_dependency(wxWidgets COMPONENTS core base)
-  include(${wxWidgets_USE_FILE})
-endif()
-if(@SHORE_NEEDS_QT@)
-  find_dependency(Qt6 COMPONENTS Widgets)
-endif()
-
 include("${CMAKE_CURRENT_LIST_DIR}/shoreTargets.cmake")
 check_required_components(shore)

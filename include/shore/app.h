@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "backend.h"
 
 namespace shore {
 
@@ -11,9 +12,12 @@ class SHFrame;
 
 class SHApp {
 public:
+    SHApp() = default;
+    explicit SHApp(std::unique_ptr<SHBackend> backend);
     virtual ~SHApp();
     virtual bool OnInit() = 0;
     virtual void OnExit() {}
+    void SetBackend(std::unique_ptr<SHBackend> backend);
     void RegisterFeature(SHFeature* feature);
     void SetBackendProperty(const std::string& name, const std::string& value) { backendProperties_[name] = value; }
     const std::string& BackendProperty(const std::string& name) const;
@@ -26,6 +30,9 @@ public:
     char** ArgV() const { return argv_; }
     static const char* BackendName();
 private:
+    friend class SHFrame;
+    static std::unique_ptr<SHFramePeer> CreateFramePeer(SHFrame* frame);
+    std::unique_ptr<SHBackend> backend_;
     std::vector<std::unique_ptr<SHFrame>> frames_;
     std::vector<SHFeature*> features_;
     std::map<std::string, std::string> backendProperties_;

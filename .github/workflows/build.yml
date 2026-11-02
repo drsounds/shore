@@ -3,34 +3,13 @@ on: [push, pull_request]
 permissions:
   contents: read
 jobs:
-  qt6:
-    runs-on: ubuntu-latest
+  core:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y g++ cmake qt6-base-dev
-      - run: cmake -B build -DSHORE_BACKEND=qt
-      - run: cmake --build build -j
-      - run: ctest --test-dir build --output-on-failure
-  linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: sudo apt-get update && sudo apt-get install -y g++ cmake libwxgtk3.2-dev || sudo apt-get install -y g++ cmake libwxgtk3.0-gtk3-dev
-      - run: cmake -B build -DSHORE_BACKEND=wx
-      - run: cmake --build build -j
-      - run: ctest --test-dir build --output-on-failure
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ilammy/msvc-dev-cmd@v1
-      - run: cmake -B build -DSHORE_BACKEND=mfc
-      - run: cmake --build build --config Release
+      - run: cmake -S . -B build -DSHORE_BUILD_TESTS=ON
+      - run: cmake --build build --config Release --parallel
       - run: ctest --test-dir build -C Release --output-on-failure
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: cmake -B build -DSHORE_BACKEND=cocoa -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_OBJCXX_COMPILER=clang++
-      - run: cmake --build build -j
-      - run: ctest --test-dir build --output-on-failure

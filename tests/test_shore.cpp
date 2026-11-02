@@ -1,6 +1,8 @@
 #include <cstdio>
 #include <cstdlib>
+#include <stdexcept>
 #include <shore/shore.h>
+#include "test_backend.h"
 using namespace shore;
 
 #define CHECK(x) do { if (!(x)) { std::printf("FAIL %s:%d %s\n", __FILE__, __LINE__, #x); std::exit(1); } } while (0)
@@ -41,7 +43,10 @@ struct Canvas : SHCanvas {
     void DrawText(int, int, const std::string&, SHColor) override {}
 };
 struct App : SHApp {
+    App() : SHApp(MakeTestBackend()) {}
+
     bool OnInit() override {
+        CHECK(std::string(SHApp::BackendName()) == "test");
         SetBackendProperty("wx.toolkit", "aui");
         CHECK(BackendProperty("wx.toolkit") == "aui");
         Doc doc;
@@ -120,4 +125,23 @@ struct App : SHApp {
         return true;
     }
 };
-int main(int argc, char** argv) { App a; int rc = a.Run(argc, argv); std::puts(rc == 0 ? "OK" : "FAIL"); return rc; }
+
+struct AppWithoutBackend : SHApp {
+    bool OnInit() override { return true; }
+};
+
+int main(int argc, char** argv) {
+    AppWithoutBackend missingBackend;
+    bool rejectedMissingBackend = false;
+    try {
+        missingBackend.Run(argc, argv);
+    } catch (const std::logic_error&) {
+        rejectedMissingBackend = true;
+    }
+    CHECK(rejectedMissingBackend && SHApp::Get() == nullptr);
+    App app;
+    int rc = app.Run(argc, argv);
+    CHECK(SHApp::Get() == nullptr);
+    std::puts(rc == 0 ? "OK" : "FAIL");
+    return rc;
+}

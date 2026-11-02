@@ -1,6 +1,7 @@
 #pragma once
 
 #include "app.h"
+#include "backend.h"
 #include "canvas.h"
 #include "concept.h"
 #include "dialog.h"
@@ -12,6 +13,7 @@
 #include "file_type.h"
 #include "file_type_registry.h"
 #include "frame.h"
+#include "frame_peer.h"
 #include "panel.h"
 #include "property_group.h"
 #include "property_panel.h"

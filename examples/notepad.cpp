@@ -1,4 +1,5 @@
 // Minimal example: a click counter document with a toolbar and menu.
+#include SHORE_BACKEND_HEADER
 #include <shore/shore.h>
 using namespace shore;
 
@@ -22,6 +23,8 @@ public:
 
 class NotepadApp : public SHApp {
 public:
+    NotepadApp() : SHApp(SHORE_BACKEND_FACTORY()) {}
+
     bool OnInit() override {
         doc_.reset(new CounterDoc);
         auto* frame = AddFrame(std::unique_ptr<SHFrame>(new SHFrame("Shore Counter")));

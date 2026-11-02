@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "frame_peer.h"
 #include "types.h"
 
 namespace shore {

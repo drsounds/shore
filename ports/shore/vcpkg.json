@@ -3,19 +3,9 @@
   "version": "0.1.0",
   "description": "A small, backend-agnostic C++ Document/View framework",
   "homepage": "https://github.com/drsounds/shore",
-  "license": "LGPL",
+  "license": "LGPL-2.1-only",
   "dependencies": [
-    {
-      "name": "vcpkg-cmake",
-      "host": true
-    },
-    {
-      "name": "vcpkg-cmake-config",
-      "host": true
-    },
-    {
-      "name": "wxwidgets",
-      "platform": "!windows & !osx"
-    }
+    { "name": "vcpkg-cmake", "host": true },
+    { "name": "vcpkg-cmake-config", "host": true }
   ]
 }

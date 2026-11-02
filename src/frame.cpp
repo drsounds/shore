@@ -3,12 +3,12 @@
 #include <shore/panel.h>
 #include <shore/toolbar.h>
 #include <shore/view.h>
-#include "backend.h"
+#include <shore/app.h>
 
 namespace shore {
 
 SHFrame::SHFrame(const std::string& title, int w, int h)
-    : title_(title), width_(w), height_(h), peer_(backend::CreateFramePeer(this)) {}
+    : title_(title), width_(w), height_(h), peer_(SHApp::CreateFramePeer(this)) {}
 SHFrame::~SHFrame() { view_.reset(); peer_.reset(); }
 
 void SHFrame::SetTitle(const std::string& t) { title_ = t; peer_->SetTitle(t); }

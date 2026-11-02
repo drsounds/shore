@@ -2,7 +2,7 @@
 
 A small, abstract C++ Document/View framework. The public API (`SHApp`, `SHDocument`,
 `SHView`, `SHFrame`, `SHToolBar`, `SHCanvas`) in `include/shore/shore.h` is backend independent;
-the backend is chosen at build time:
+the backend is supplied by a separate peer package:
 
 | Platform | Backend  | Toolchain      |
 |----------|----------|----------------|
@@ -12,26 +12,25 @@ the backend is chosen at build time:
 | macOS    | Cocoa    | LLVM/Clang     |
 | any      | null     | headless/tests |
 
-```
-cmake -B build -DSHORE_BACKEND=auto   # auto|mfc|wtl|wx|qt|cocoa|null
-cmake --build build
-ctest --test-dir build
-```
+Build and install the core independently with CMake, then link the desired
+`shore-backend-*` package. An app passes that package's `CreateBackend()` result
+to `SHApp` (for example, in its constructor). Backend dependencies are no longer
+required to build or use the core API.
 
-The Qt 6 backend requires the Qt 6 Widgets development package and can be selected
-with `-DSHORE_BACKEND=qt`.
+To build the bundled example, set `SHORE_BACKEND_PACKAGE`,
+`SHORE_BACKEND_TARGET`, `SHORE_BACKEND_HEADER`, and `SHORE_BACKEND_FACTORY` to
+the selected backend's package name, CMake target, factory header, and factory
+function.
 
-The WTL backend requires WTL and ATL headers. If CMake cannot locate `atlapp.h`,
-set `WTL_ROOT` to the WTL installation directory when configuring.
-
-See `examples/notepad.cpp`. GitHub Actions (`.github/workflows/build.yml`) builds all three platforms.
+See `examples/notepad.cpp` for the framework API. Each backend peer repository
+contains its own build, package, and platform-specific workflow.
 
 ## Using with vcpkg
 
 The `ports/shore` directory is an overlay port. Add this repository's `ports`
 directory as an overlay port and add `shore` to your vcpkg manifest dependencies.
-The port selects the platform's default backend (MFC on Windows, Cocoa on macOS,
-and wxWidgets elsewhere).
+Each peer backend repository has a separate vcpkg port and depends on this core
+package plus its platform toolkit.
 
 Link the exported CMake target:
 
