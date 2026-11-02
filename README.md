@@ -6,16 +6,19 @@ the backend is chosen at build time:
 
 | Platform | Backend  | Toolchain      |
 |----------|----------|----------------|
-| Windows  | MFC      | MSVC           |
+| Windows  | MFC or WTL | MSVC         |
 | Linux    | wxWidgets| g++            |
 | macOS    | Cocoa    | LLVM/Clang     |
 | any      | null     | headless/tests |
 
 ```
-cmake -B build -DSHORE_BACKEND=auto   # auto|mfc|wx|cocoa|null
+cmake -B build -DSHORE_BACKEND=auto   # auto|mfc|wtl|wx|cocoa|null
 cmake --build build
 ctest --test-dir build
 ```
+
+The WTL backend requires WTL and ATL headers. If CMake cannot locate `atlapp.h`,
+set `WTL_ROOT` to the WTL installation directory when configuring.
 
 See `examples/notepad.cpp`. GitHub Actions (`.github/workflows/build.yml`) builds all three platforms.
 
