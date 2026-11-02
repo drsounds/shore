@@ -5,7 +5,7 @@
 
 
 @interface SHCocoaView : NSView
-@property(nonatomic) shore::SHFrame* frame;
+@property(nonatomic) shore::SHFrame* shoreFrame;
 @end
 
 @interface SHCocoaTarget : NSObject
@@ -52,11 +52,11 @@ private:
     [[NSColor whiteColor] setFill];
     NSRectFill(self.bounds);
     shore::CocoaCanvas c(self.bounds);
-    self.frame->Paint(c);
+    self.shoreFrame->Paint(c);
 }
 - (void)mouseDown:(NSEvent*)e {
     NSPoint p = [self convertPoint:e.locationInWindow fromView:nil];
-    if (self.frame->View()) self.frame->View()->OnMouseDown((int)p.x, (int)p.y);
+    if (self.shoreFrame->View()) self.shoreFrame->View()->OnMouseDown((int)p.x, (int)p.y);
 }
 @end
 
@@ -91,7 +91,7 @@ public:
         status_.autoresizingMask = NSViewWidthSizable;
         [content addSubview:status_];
         view_ = [[SHCocoaView alloc] initWithFrame:NSMakeRect(0, 18, r.size.width, r.size.height - 18)];
-        view_.frame_ = f;
+        view_.shoreFrame = f;
         view_.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         [content addSubview:view_];
         target_ = [SHCocoaTarget new];
