@@ -4,6 +4,9 @@ project(shore VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 # Backend selection: auto picks MFC on Windows, Cocoa on macOS, wxWidgets elsewhere.
 set(SHORE_BACKEND "auto" CACHE STRING "auto|mfc|cocoa|wx|null")
 set_property(CACHE SHORE_BACKEND PROPERTY STRINGS auto mfc cocoa wx null)
@@ -24,10 +27,12 @@ option(SHORE_BUILD_EXAMPLES "Build examples" ON)
 option(SHORE_BUILD_TESTS "Build tests" ON)
 
 set(_sources src/shore.cpp)
+set(SHORE_NEEDS_WX FALSE)
 if(_backend STREQUAL "null")
   list(APPEND _sources src/backends/null_backend.cpp)
 elseif(_backend STREQUAL "wx")
   list(APPEND _sources src/backends/wx_backend.cpp)
+  set(SHORE_NEEDS_WX TRUE)
 elseif(_backend STREQUAL "mfc")
   list(APPEND _sources src/backends/mfc_backend.cpp)
 elseif(_backend STREQUAL "cocoa")
@@ -38,7 +43,12 @@ else()
 endif()
 
 add_library(shore ${_sources})
-target_include_directories(shore PUBLIC include PRIVATE src)
+add_library(shore::shore ALIAS shore)
+target_include_directories(shore PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+  PRIVATE src
+)
 
 if(_backend STREQUAL "wx")
   find_package(wxWidgets REQUIRED COMPONENTS core base)
@@ -71,3 +81,31 @@ if(SHORE_BUILD_TESTS)
   target_link_libraries(shore_tests PRIVATE shore_null)
   add_test(NAME shore_tests COMMAND shore_tests)
 endif()
+
+install(TARGETS shore EXPORT shoreTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(EXPORT shoreTargets
+  FILE shoreTargets.cmake
+  NAMESPACE shore::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/shore
+)
+
+configure_package_config_file(
+  cmake/shoreConfig.cmake.in
+  "${CMAKE_CURRENT_BINARY_DIR}/shoreConfig.cmake"
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/shore
+)
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/shoreConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+install(FILES
+  "${CMAKE_CURRENT_BINARY_DIR}/shoreConfig.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/shoreConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/shore
+)

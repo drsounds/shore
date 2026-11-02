@@ -19,6 +19,20 @@ ctest --test-dir build
 
 See `examples/notepad.cpp`. GitHub Actions (`.github/workflows/build.yml`) builds all three platforms.
 
+## Using with vcpkg
+
+The `ports/shore` directory is an overlay port. Add this repository's `ports`
+directory as an overlay port and add `shore` to your vcpkg manifest dependencies.
+The port selects the platform's default backend (MFC on Windows, Cocoa on macOS,
+and wxWidgets elsewhere).
+
+Link the exported CMake target:
+
+```cmake
+find_package(shore CONFIG REQUIRED)
+target_link_libraries(your_app PRIVATE shore::shore)
+```
+
 ## Optional UI and document architecture
 
 The public API also includes dock-positioned `SHPanel`s, `SHFeature`/`SHConcept`
