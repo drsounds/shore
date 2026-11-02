@@ -14,6 +14,7 @@ WTL::CAppModule _Module;
 namespace shore {
 namespace {
 using namespace WTL;
+int g_frameCount = 0;
 
 std::wstring W(const std::string& value) {
     int length = MultiByteToWideChar(CP_UTF8, 0, value.c_str(), -1, nullptr, 0);
@@ -84,6 +85,7 @@ public:
         MESSAGE_HANDLER(WM_CREATE, OnCreate)
         MESSAGE_HANDLER(WM_SIZE, OnSize)
         MESSAGE_HANDLER(WM_COMMAND, OnCommand)
+        MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
         CHAIN_MSG_MAP(CFrameWindowImpl<WtlFrame>)
     END_MSG_MAP()
 
@@ -106,9 +108,15 @@ public:
                 WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, 1003))
             return -1;
         Layout();
+        ++g_frameCount;
         return 0;
     }
     LRESULT OnSize(UINT, WPARAM, LPARAM, BOOL&) { Layout(); return 0; }
+    LRESULT OnDestroy(UINT, WPARAM, LPARAM, BOOL& handled) {
+        if (g_frameCount > 0 && --g_frameCount == 0) ::PostQuitMessage(0);
+        handled = TRUE;
+        return 0;
+    }
     LRESULT OnCommand(UINT, WPARAM wParam, LPARAM, BOOL& handled) {
         UINT id = LOWORD(wParam);
         if (id >= kCommandBase && frame_->Dispatch(static_cast<int>(id - kCommandBase))) {

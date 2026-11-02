@@ -102,6 +102,8 @@ if(SHORE_BUILD_EXAMPLES)
     set_target_properties(notepad PROPERTIES MFC_FLAG 2)
     # keep a console-style main() entry point
     target_link_options(notepad PRIVATE /ENTRY:mainCRTStartup)
+  elseif(_backend STREQUAL "wtl")
+    target_link_options(notepad PRIVATE /ENTRY:mainCRTStartup)
   endif()
 endif()
 
