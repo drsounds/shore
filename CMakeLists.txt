@@ -26,7 +26,24 @@ message(STATUS "Shore backend: ${_backend}")
 option(SHORE_BUILD_EXAMPLES "Build examples" ON)
 option(SHORE_BUILD_TESTS "Build tests" ON)
 
-set(_sources src/shore.cpp)
+set(_core_sources
+  src/app.cpp
+  src/concept.cpp
+  src/dialog.cpp
+  src/document.cpp
+  src/document_object.cpp
+  src/document_renderer.cpp
+  src/feature.cpp
+  src/feature_registry.cpp
+  src/file_type.cpp
+  src/file_type_registry.cpp
+  src/frame.cpp
+  src/property_group.cpp
+  src/property_panel.cpp
+  src/tool.cpp
+  src/view.cpp
+)
+set(_sources ${_core_sources})
 set(SHORE_NEEDS_WX FALSE)
 if(_backend STREQUAL "null")
   list(APPEND _sources src/backends/null_backend.cpp)
@@ -75,7 +92,7 @@ endif()
 if(SHORE_BUILD_TESTS)
   enable_testing()
   # Core logic is backend independent, so test it against the null backend.
-  add_library(shore_null src/shore.cpp src/backends/null_backend.cpp)
+  add_library(shore_null ${_core_sources} src/backends/null_backend.cpp)
   target_include_directories(shore_null PUBLIC include PRIVATE src)
   add_executable(shore_tests tests/test_shore.cpp)
   target_link_libraries(shore_tests PRIVATE shore_null)
