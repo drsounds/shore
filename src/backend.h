@@ -12,6 +12,7 @@ public:
     virtual void SetStatusText(const std::string& s) = 0;
     virtual void AddMenuItem(const std::string& menu, const std::string& label, int id) = 0;
     virtual void SetToolBar(const SHToolBar& tb) = 0;
+    virtual void AddPanel(const SHPanel&) {}
     virtual void Show(bool show) = 0;
     virtual void Invalidate() = 0;
 };
